@@ -2,66 +2,98 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Panel Admin</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
 <div class="container">
-    <div class="icon">🔐</div>
-    <h2>Iniciar Sesión</h2>
+    <div class="icon">👑</div>
+    <h2>Panel Administrador</h2>
 
-    <input id="email" placeholder="Correo electrónico">
-    <input id="password" type="password" placeholder="Contraseña">
-
-    <button onclick="login()">Entrar</button>
-
-    <a href="register.html" class="link">¿No tienes cuenta? Regístrate</a>
+    <ul id="list"></ul>
 </div>
 
 <script>
-async function login() {
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+// 🔒 PROTECCIÓN
+if(localStorage.getItem("role") !== "admin"){
+    alert("Acceso denegado");
+    window.location.href = "login.html";
+}
 
-    // Validación básica
-    if(!email || !password){
-        alert("Completa todos los campos");
+const list = document.getElementById("list");
+
+// =========================
+// CARGAR CITAS
+// =========================
+async function load(){
+    try {
+        const res = await fetch("http://localhost:5000/api/admin/appointments");
+        const data = await res.json();
+
+        list.innerHTML = "";
+
+        data.forEach(c => {
+            list.innerHTML += `
+            <li>
+                👤 ${c.user} <br>
+                🩺 ${c.doctor} (${c.specialty}) <br>
+                📅 ${c.date} <br>
+                📌 Estado: ${c.status} <br>
+
+                <button class="btn-red" onclick="deleteCita(${c.id})">Eliminar</button>
+                <button class="btn-orange" onclick="editCita(${c.id})">Editar</button>
+            </li>`;
+        });
+
+    } catch {
+        alert("Error cargando citas");
+    }
+}
+
+// =========================
+// ELIMINAR
+// =========================
+async function deleteCita(id){
+    await fetch(`http://localhost:5000/api/appointments/${id}`, {
+        method: "DELETE"
+    });
+
+    load();
+}
+
+// =========================
+// EDITAR
+// =========================
+async function editCita(id){
+
+    const doctor = prompt("Nuevo doctor:");
+    const specialty = prompt("Nueva especialidad:");
+    const date = prompt("Nueva fecha (YYYY-MM-DD HH:MM):");
+
+    if(!doctor || !specialty || !date){
+        alert("Datos inválidos");
         return;
     }
 
-    try {
-        const res = await fetch("http://localhost:5000/api/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ email, password })
-        });
+    await fetch(`http://localhost:5000/api/appointments/${id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            doctor,
+            specialty,
+            date
+        })
+    });
 
-        const data = await res.json();
-
-        if(res.ok){
-            // Guardar sesión
-            localStorage.setItem("user", data.email);
-            localStorage.setItem("role", data.role);
-
-            alert("Bienvenido 👋");
-
-            // Redirección por rol
-            if(data.role === "admin"){
-                window.location.href = "admin.html";
-            } else {
-                window.location.href = "dashboard.html";
-            }
-        } else {
-            alert(data.error || "Error al iniciar sesión");
-        }
-
-    } catch (error) {
-        alert("No se pudo conectar con el servidor");
-    }
+    load();
 }
+
+// INIT
+load();
+
 </script>
 
 </body>
