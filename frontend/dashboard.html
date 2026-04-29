@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="icon">📅</div>
+    <h2>Agendar Cita</h2>
+
+    <select id="specialty" onchange="loadDoctors()"></select>
+    <select id="doctor"></select>
+    <input id="date" type="datetime-local">
+
+    <button class="btn-green" onclick="create()">Crear cita</button>
+
+    <h3>Mis citas</h3>
+    <ul id="list"></ul>
+</div>
+
+<script>
+
+// 🔒 Verificar sesión
+if(!localStorage.getItem("user")){
+    alert("Debes iniciar sesión");
+    window.location.href = "login.html";
+}
+
+// =========================
+// CARGAR ESPECIALIDADES
+// =========================
+async function loadSpecialties(){
+    try {
+        const res = await fetch("http://localhost:5000/api/specialties");
+        const data = await res.json();
+
+        const sel = document.getElementById("specialty");
+        sel.innerHTML = "";
+
+        data.forEach(s => {
+            sel.innerHTML += `<option>${s}</option>`;
+        });
+
+        loadDoctors();
+
+    } catch {
+        alert("Error cargando especialidades");
+    }
+}
+
+// =========================
+// CARGAR DOCTORES
+// =========================
+async function loadDoctors(){
+    const specialty = document.getElementById("specialty").value;
+
+    try {
+        const res = await fetch(`http://localhost:5000/api/doctors/${specialty}`);
+        const data = await res.json();
+
+        const sel = document.getElementById("doctor");
+        sel.innerHTML = "";
+
+        data.forEach(d => {
+            sel.innerHTML += `<option>${d}</option>`;
+        });
+
+    } catch {
+        alert("Error cargando doctores");
+    }
+}
+
+// =========================
+// CREAR CITA
+// =========================
+async function create(){
+
+    const doctor = document.getElementById("doctor").value;
+    const specialty = document.getElementById("specialty").value;
+    const date = document.getElementById("date").value;
+
+    if(!doctor || !specialty || !date){
+        alert("Completa todos los campos");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:5000/api/appointments", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                user: localStorage.getItem("user"),
+                doctor,
+                specialty,
+                date
+            })
+        });
+
+        const data = await res.json();
+
+        if(res.ok){
+            alert("Cita creada ✅");
+            load();
+        } else {
+            alert(data.error);
+        }
+
+    } catch {
+        alert("Error al crear cita");
+    }
+}
+
+// =========================
+// ELIMINAR CITA
+// =========================
+async function deleteCita(id){
+    await fetch(`http://localhost:5000/api/appointments/${id}`, {
+        method: "DELETE"
+    });
+
+    load();
+}
+
+// =========================
+// CARGAR CITAS
+// =========================
+async function load(){
+    try {
+        const res = await fetch("http://localhost:5000/api/appointments");
+        const data = await res.json();
+
+        const list = document.getElementById("list");
+        list.innerHTML = "";
+
+        data.forEach(c => {
+            list.innerHTML += `
+            <li>
+                📅 ${c.date} <br>
+                🩺 ${c.doctor} (${c.specialty}) <br>
+                <button class="btn-red" onclick="deleteCita(${c.id})">Eliminar</button>
+            </li>`;
+        });
+
+    } catch {
+        alert("Error cargando citas");
+    }
+}
+
+// INIT
+loadSpecialties();
+load();
+
+</script>
+
+</body>
+</html>

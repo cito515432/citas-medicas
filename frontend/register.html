@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="icon">📝</div>
+    <h2>Crear cuenta</h2>
+
+    <input id="email" placeholder="Correo electrónico">
+    <input id="password" type="password" placeholder="Contraseña">
+
+    <button class="btn-green" onclick="register()">Registrarse</button>
+
+    <a href="login.html" class="link">¿Ya tienes cuenta? Inicia sesión</a>
+</div>
+
+<script>
+async function register() {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if(!email || !password){
+        alert("Completa todos los campos");
+        return;
+    }
+
+    const res = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if(data.message){
+        alert("Registro exitoso ✅");
+        window.location.href = "login.html";
+    } else {
+        alert(data.error);
+    }
+}
+</script>
+
+</body>
+</html>
