@@ -2,15 +2,132 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Dashboard - SaludPro</title>
+
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        /* CONTENEDOR */
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* HEADER */
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007BFF;
+            text-align: center;
+        }
+
+        .logo span {
+            color: #28a745;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* INPUTS */
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        /* BOTONES */
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-green {
+            background: #28a745;
+        }
+
+        .btn-red {
+            background: red;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* LISTA */
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: #f1f1f1;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="container">
-    <div class="icon">📅</div>
-    <h2>Agendar Cita</h2>
+
+    <!-- LOGO -->
+    <div class="logo">Salud<span>Pro</span></div>
+    <div class="subtitle">Gestión de citas médicas</div>
+
+    <h2>📅 Agendar Cita</h2>
 
     <select id="specialty" onchange="loadDoctors()"></select>
     <select id="doctor"></select>
@@ -20,6 +137,11 @@
 
     <h3>Mis citas</h3>
     <ul id="list"></ul>
+
+    <footer>
+        © 2025 SaludPro
+    </footer>
+
 </div>
 
 <script>
