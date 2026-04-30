@@ -2,99 +2,662 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Admin</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - SaludPro</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --bg: #eef6ff;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.20), transparent 35%),
+                linear-gradient(135deg, #e0f2fe, #f8fafc 55%, #dcfce7);
+            color: var(--text);
+        }
+
+        .layout {
+            width: min(1180px, 94%);
+            margin: 0 auto;
+            padding: 28px 0;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #38bdf8);
+            color: #fff;
+            font-size: 28px;
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
+        }
+
+        .brand h1 {
+            font-size: 28px;
+            line-height: 1.1;
+        }
+
+        .brand p {
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .logout {
+            border: none;
+            background: var(--card);
+            color: var(--danger);
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            transition: 0.2s;
+        }
+
+        .logout:hover {
+            transform: translateY(-2px);
+            background: #fff1f2;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 22px;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+        }
+
+        .stat-card span {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stat-card strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 34px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            border-radius: 26px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.10);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            padding: 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h2 {
+            font-size: 22px;
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search,
+        .filter {
+            border: 1px solid var(--border);
+            background: #fff;
+            padding: 12px 14px;
+            border-radius: 14px;
+            outline: none;
+        }
+
+        .search:focus,
+        .filter:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .refresh {
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            padding: 12px 15px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .refresh:hover {
+            transform: translateY(-2px);
+            background: var(--primary-dark);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 16px 18px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        tr:hover td {
+            background: #f9fbff;
+        }
+
+        .patient {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #dbeafe;
+            color: var(--primary-dark);
+            font-weight: 800;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .badge.activa {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.eliminada {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            border: none;
+            padding: 9px 12px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.92;
+        }
+
+        .btn-edit {
+            background: var(--warning);
+        }
+
+        .btn-delete {
+            background: var(--danger);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 38px;
+            color: var(--muted);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(460px, 100%);
+            background: #fff;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-card h3 {
+            margin-bottom: 16px;
+            font-size: 22px;
+        }
+
+        .modal-card label {
+            display: block;
+            margin: 12px 0 6px;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .modal-card input,
+        .modal-card select {
+            width: 100%;
+            border: 1px solid var(--border);
+            padding: 12px 14px;
+            border-radius: 14px;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .save {
+            background: var(--primary);
+        }
+
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            background: #111827;
+            color: #fff;
+            padding: 13px 16px;
+            border-radius: 14px;
+            box-shadow: 0 18px 35px rgba(0,0,0,0.20);
+            display: none;
+            z-index: 20;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @media (max-width: 780px) {
+            .topbar,
+            .panel-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .tools {
+                flex-direction: column;
+            }
+
+            .search,
+            .filter,
+            .refresh,
+            .logout {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <main class="layout">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">👑</div>
+                <div>
+                    <h1>Panel Administrador</h1>
+                    <p>Control y gestión de citas médicas - SaludPro</p>
+                </div>
+            </div>
 
-<div class="container">
-    <div class="icon">👑</div>
-    <h2>Panel Administrador</h2>
+            <button class="logout" onclick="logout()">Cerrar sesión</button>
+        </header>
 
-    <ul id="list"></ul>
-</div>
+        <section class="stats">
+            <article class="stat-card">
+                <span>Total de citas</span>
+                <strong id="totalCount">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>Citas activas</span>
+                <strong id="activeCount">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>Citas eliminadas</span>
+                <strong id="deletedCount">0</strong>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Listado de citas</h2>
+                    <p style="color: var(--muted); margin-top: 4px;">Busca, filtra, edita o elimina citas registradas.</p>
+                </div>
+
+                <div class="tools">
+                    <input id="searchInput" class="search" placeholder="Buscar paciente, doctor..." oninput="renderAppointments()">
+                    <select id="statusFilter" class="filter" onchange="renderAppointments()">
+                        <option value="TODAS">Todas</option>
+                        <option value="ACTIVA">Activas</option>
+                        <option value="ELIMINADA">Eliminadas</option>
+                    </select>
+                    <button class="refresh" onclick="loadAppointments()">Actualizar</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Doctor</th>
+                            <th>Especialidad</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentsTable"></tbody>
+                </table>
+            </div>
+
+            <div id="emptyState" class="empty" style="display:none;">
+                No hay citas para mostrar.
+            </div>
+        </section>
+    </main>
+
+    <section id="editModal" class="modal">
+        <div class="modal-card">
+            <h3>Editar cita</h3>
+
+            <input type="hidden" id="editId">
+
+            <label for="editSpecialty">Especialidad</label>
+            <select id="editSpecialty" onchange="loadEditDoctors()"></select>
+
+            <label for="editDoctor">Doctor</label>
+            <select id="editDoctor"></select>
+
+            <label for="editDate">Fecha y hora</label>
+            <input id="editDate" type="datetime-local">
+
+            <div class="modal-actions">
+                <button class="btn cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn save" onclick="saveEdit()">Guardar cambios</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="toast" class="toast"></div>
 
 <script>
+const API_URL = "http://localhost:5000/api";
+let appointments = [];
+let specialties = [];
 
-// 🔒 PROTECCIÓN
-if(localStorage.getItem("role") !== "admin"){
+// Protección de acceso
+if (localStorage.getItem("role") !== "admin") {
     alert("Acceso denegado");
     window.location.href = "login.html";
 }
 
-const list = document.getElementById("list");
+function logout() {
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    window.location.href = "login.html";
+}
 
-// =========================
-// CARGAR CITAS
-// =========================
-async function load(){
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+async function loadAppointments() {
     try {
-        const res = await fetch("http://localhost:5000/api/admin/appointments");
-        const data = await res.json();
-
-        list.innerHTML = "";
-
-        data.forEach(c => {
-            list.innerHTML += `
-            <li>
-                👤 ${c.user} <br>
-                🩺 ${c.doctor} (${c.specialty}) <br>
-                📅 ${c.date} <br>
-                📌 Estado: ${c.status} <br>
-
-                <button class="btn-red" onclick="deleteCita(${c.id})">Eliminar</button>
-                <button class="btn-orange" onclick="editCita(${c.id})">Editar</button>
-            </li>`;
-        });
-
-    } catch {
-        alert("Error cargando citas");
+        const res = await fetch(`${API_URL}/admin/appointments`);
+        appointments = await res.json();
+        updateStats();
+        renderAppointments();
+    } catch (error) {
+        alert("Error cargando citas. Verifica que el backend esté encendido.");
     }
 }
 
-// =========================
-// ELIMINAR
-// =========================
-async function deleteCita(id){
-    await fetch(`http://localhost:5000/api/appointments/${id}`, {
-        method: "DELETE"
-    });
+async function loadSpecialties() {
+    try {
+        const res = await fetch(`${API_URL}/specialties`);
+        specialties = await res.json();
 
-    load();
+        const select = document.getElementById("editSpecialty");
+        select.innerHTML = specialties.map(s => `<option value="${s}">${s}</option>`).join("");
+    } catch (error) {
+        console.error("No se pudieron cargar especialidades", error);
+    }
 }
 
-// =========================
-// EDITAR
-// =========================
-async function editCita(id){
+async function loadEditDoctors(selectedDoctor = "") {
+    const specialty = document.getElementById("editSpecialty").value;
+    const res = await fetch(`${API_URL}/doctors/${encodeURIComponent(specialty)}`);
+    const doctors = await res.json();
 
-    const doctor = prompt("Nuevo doctor:");
-    const specialty = prompt("Nueva especialidad:");
-    const date = prompt("Nueva fecha (YYYY-MM-DD HH:MM):");
+    const select = document.getElementById("editDoctor");
+    select.innerHTML = doctors.map(d => `<option value="${d}">${d}</option>`).join("");
 
-    if(!doctor || !specialty || !date){
-        alert("Datos inválidos");
+    if (selectedDoctor) {
+        select.value = selectedDoctor;
+    }
+}
+
+function updateStats() {
+    const total = appointments.length;
+    const active = appointments.filter(c => c.status === "ACTIVA").length;
+    const deleted = appointments.filter(c => c.status === "ELIMINADA").length;
+
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("activeCount").textContent = active;
+    document.getElementById("deletedCount").textContent = deleted;
+}
+
+function renderAppointments() {
+    const table = document.getElementById("appointmentsTable");
+    const empty = document.getElementById("emptyState");
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const status = document.getElementById("statusFilter").value;
+
+    const filtered = appointments.filter(c => {
+        const matchesSearch = `${c.user} ${c.doctor} ${c.specialty} ${c.date}`.toLowerCase().includes(search);
+        const matchesStatus = status === "TODAS" || c.status === status;
+        return matchesSearch && matchesStatus;
+    });
+
+    table.innerHTML = "";
+    empty.style.display = filtered.length ? "none" : "block";
+
+    filtered.forEach(c => {
+        const initial = (c.user || "U").charAt(0).toUpperCase();
+        const statusClass = c.status === "ACTIVA" ? "activa" : "eliminada";
+
+        table.innerHTML += `
+            <tr>
+                <td>
+                    <div class="patient">
+                        <div class="avatar">${initial}</div>
+                        <span>${c.user}</span>
+                    </div>
+                </td>
+                <td>${c.doctor}</td>
+                <td>${c.specialty}</td>
+                <td>${formatDate(c.date)}</td>
+                <td><span class="badge ${statusClass}">${c.status}</span></td>
+                <td>
+                    <div class="actions">
+                        <button class="btn btn-edit" onclick="openEdit(${c.id})">Editar</button>
+                        <button class="btn btn-delete" onclick="deleteAppointment(${c.id})">Eliminar</button>
+                    </div>
+                </td>
+            </tr>`;
+    });
+}
+
+function formatDate(value) {
+    if (!value) return "Sin fecha";
+    return value.replace("T", " ");
+}
+
+async function deleteAppointment(id) {
+    const ok = confirm("¿Seguro que deseas eliminar esta cita?");
+    if (!ok) return;
+
+    try {
+        await fetch(`${API_URL}/appointments/${id}`, { method: "DELETE" });
+        showToast("Cita eliminada correctamente");
+        loadAppointments();
+    } catch (error) {
+        alert("Error al eliminar la cita");
+    }
+}
+
+async function openEdit(id) {
+    const cita = appointments.find(c => c.id === id);
+    if (!cita) return;
+
+    document.getElementById("editId").value = cita.id;
+    document.getElementById("editSpecialty").value = cita.specialty;
+    document.getElementById("editDate").value = cita.date;
+
+    await loadEditDoctors(cita.doctor);
+
+    document.getElementById("editModal").classList.add("show");
+}
+
+function closeModal() {
+    document.getElementById("editModal").classList.remove("show");
+}
+
+async function saveEdit() {
+    const id = document.getElementById("editId").value;
+    const specialty = document.getElementById("editSpecialty").value;
+    const doctor = document.getElementById("editDoctor").value;
+    const date = document.getElementById("editDate").value;
+
+    if (!doctor || !specialty || !date) {
+        alert("Completa todos los campos");
         return;
     }
 
-    await fetch(`http://localhost:5000/api/appointments/${id}`, {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            doctor,
-            specialty,
-            date
-        })
-    });
+    try {
+        const res = await fetch(`${API_URL}/appointments/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ doctor, specialty, date })
+        });
 
-    load();
+        if (!res.ok) throw new Error("Error actualizando");
+
+        closeModal();
+        showToast("Cita actualizada correctamente");
+        loadAppointments();
+    } catch (error) {
+        alert("Error al actualizar la cita");
+    }
 }
 
-// INIT
-load();
+// Cerrar modal al tocar fuera
+window.addEventListener("click", function(event) {
+    const modal = document.getElementById("editModal");
+    if (event.target === modal) closeModal();
+});
 
+loadSpecialties();
+loadAppointments();
 </script>
-
 </body>
 </html>
