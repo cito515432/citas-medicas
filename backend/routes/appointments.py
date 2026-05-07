@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify
 from database import get_connection
 from datetime import datetime, timedelta
+try:
+    from zoneinfo import ZoneInfo
+except Exception:  # pragma: no cover
+    ZoneInfo = None
 
 appointments_bp = Blueprint('appointments', __name__)
 
@@ -9,6 +13,16 @@ DOCTORS = {
     "Dermatología": ["Dr. Ruiz", "Dra. Torres"],
     "Pediatría": ["Dr. López", "Dra. Martínez"]
 }
+
+
+# =========================
+# FECHA ACTUAL LOCAL
+# =========================
+def now_local():
+    """Render puede usar UTC; para este proyecto se compara con hora Colombia."""
+    if ZoneInfo:
+        return datetime.now(ZoneInfo("America/Bogota")).replace(tzinfo=None)
+    return datetime.now()
 
 
 # =========================
@@ -21,9 +35,19 @@ def parse_date(date_text):
     2026-05-01 13:00
     """
     try:
-        return datetime.fromisoformat(date_text.replace("T", " "))
+        return datetime.fromisoformat(str(date_text).replace("T", " "))
     except Exception:
         return None
+
+
+# =========================
+# REGLA: SOLO HASTA 1 HORA ANTES
+# =========================
+def can_user_modify(date_text):
+    appointment_date = parse_date(date_text)
+    if not appointment_date:
+        return False
+    return now_local() < (appointment_date - timedelta(hours=1))
 
 
 # =========================
@@ -33,15 +57,7 @@ def doctor_has_conflict(conn, doctor, new_date, exclude_id=None):
     """
     Bloquea si el mismo doctor tiene otra cita activa
     con menos de 1 hora de diferencia.
-    Ejemplo:
-    Si hay cita a la 1:00 PM:
-    - 12:30 PM NO se permite
-    - 1:00 PM NO se permite
-    - 1:30 PM NO se permite
-    - 12:00 PM SÍ se permite
-    - 2:00 PM SÍ se permite
     """
-
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -70,6 +86,60 @@ def doctor_has_conflict(conn, doctor, new_date, exclude_id=None):
 
 
 # =========================
+# SERIALIZAR CITA
+# =========================
+def appointment_to_dict(row):
+    return {
+        "id": row["id"],
+        "user": row["user"],
+        "doctor": row["doctor"],
+        "specialty": row["specialty"],
+        "date": row["date"],
+        "status": row["status"],
+        "attendance": row["attendance"] if "attendance" in row.keys() else "PENDIENTE",
+        "canModify": can_user_modify(row["date"])
+    }
+
+
+# =========================
+# DATOS DEL ACTOR
+# =========================
+def get_actor_data():
+    data = request.get_json(silent=True) or {}
+    return {
+        "user": data.get("user") or request.args.get("user"),
+        "role": data.get("role") or request.args.get("role") or "user",
+        "doctorName": data.get("doctorName") or request.args.get("doctorName")
+    }
+
+
+# =========================
+# VALIDAR PERMISOS PARA EDITAR/ELIMINAR
+# =========================
+def validate_manage_permission(appointment, actor):
+    role = actor.get("role")
+    actor_user = actor.get("user")
+    actor_doctor = actor.get("doctorName")
+
+    if role == "admin":
+        return None
+
+    if role == "doctor":
+        if actor_doctor and appointment["doctor"] == actor_doctor:
+            return None
+        return "No puedes modificar citas de otro doctor."
+
+    # Usuario normal: solo puede modificar sus propias citas y hasta 1 hora antes
+    if not actor_user or appointment["user"] != actor_user:
+        return "Solo puedes editar o eliminar las citas que tú agendaste."
+
+    if not can_user_modify(appointment["date"]):
+        return "Solo puedes editar o eliminar la cita hasta máximo 1 hora antes de que comience."
+
+    return None
+
+
+# =========================
 # CREAR CITA
 # =========================
 @appointments_bp.route('/appointments', methods=['POST'])
@@ -79,6 +149,7 @@ def create_appointment():
     if not data or not data.get('user') or not data.get('doctor') or not data.get('specialty') or not data.get('date'):
         return jsonify({"error": "Faltan datos"}), 400
 
+    user_email = data['user'].strip().lower()
     new_date = parse_date(data['date'])
 
     if not new_date:
@@ -88,6 +159,19 @@ def create_appointment():
     cursor = conn.cursor()
 
     try:
+        cursor.execute("SELECT fine_pending FROM users WHERE email=?", (user_email,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        if user["fine_pending"]:
+            return jsonify({
+                "error": "No puedes agendar nuevas citas porque tienes una multa pendiente de $70.000 por no haber asistido.",
+                "finePending": True,
+                "fineAmount": 70000
+            }), 403
+
         conflict = doctor_has_conflict(conn, data['doctor'], new_date)
 
         if conflict:
@@ -96,9 +180,9 @@ def create_appointment():
             }), 409
 
         cursor.execute("""
-        INSERT INTO appointments (user, doctor, specialty, date, status)
-        VALUES (?, ?, ?, ?, 'ACTIVA')
-        """, (data['user'], data['doctor'], data['specialty'], data['date']))
+        INSERT INTO appointments (user, doctor, specialty, date, status, attendance)
+        VALUES (?, ?, ?, ?, 'ACTIVA', 'PENDIENTE')
+        """, (user_email, data['doctor'], data['specialty'], data['date']))
 
         conn.commit()
 
@@ -117,27 +201,23 @@ def create_appointment():
 # =========================
 @appointments_bp.route('/appointments', methods=['GET'])
 def get_appointments():
+    user_filter = request.args.get("user")
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM appointments WHERE status='ACTIVA'")
-    rows = cursor.fetchall()
+    if user_filter:
+        cursor.execute("""
+            SELECT * FROM appointments
+            WHERE status='ACTIVA' AND user=?
+            ORDER BY date ASC
+        """, (user_filter.strip().lower(),))
+    else:
+        cursor.execute("SELECT * FROM appointments WHERE status='ACTIVA' ORDER BY date ASC")
 
+    rows = cursor.fetchall()
     conn.close()
 
-    data = []
-
-    for r in rows:
-        data.append({
-            "id": r["id"],
-            "user": r["user"],
-            "doctor": r["doctor"],
-            "specialty": r["specialty"],
-            "date": r["date"],
-            "status": r["status"]
-        })
-
-    return jsonify(data)
+    return jsonify([appointment_to_dict(r) for r in rows])
 
 
 # =========================
@@ -161,15 +241,32 @@ def get_doctors(specialty):
 # =========================
 @appointments_bp.route('/appointments/<int:id>', methods=['DELETE'])
 def delete_appointment(id):
+    actor = get_actor_data()
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("UPDATE appointments SET status='ELIMINADA' WHERE id=?", (id,))
+    try:
+        cursor.execute("SELECT * FROM appointments WHERE id=?", (id,))
+        appointment = cursor.fetchone()
 
-    conn.commit()
-    conn.close()
+        if not appointment:
+            return jsonify({"error": "Cita no encontrada"}), 404
 
-    return jsonify({"message": "Cita eliminada"})
+        permission_error = validate_manage_permission(appointment, actor)
+        if permission_error:
+            return jsonify({"error": permission_error}), 403
+
+        cursor.execute("UPDATE appointments SET status='ELIMINADA' WHERE id=?", (id,))
+
+        conn.commit()
+        return jsonify({"message": "Cita eliminada"})
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Error al eliminar cita"}), 500
+
+    finally:
+        conn.close()
 
 
 # =========================
@@ -180,24 +277,84 @@ def admin_all():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM appointments")
+    cursor.execute("SELECT * FROM appointments ORDER BY date DESC")
     rows = cursor.fetchall()
 
     conn.close()
 
-    data = []
+    return jsonify([appointment_to_dict(r) for r in rows])
 
-    for r in rows:
-        data.append({
-            "id": r["id"],
-            "user": r["user"],
-            "doctor": r["doctor"],
-            "specialty": r["specialty"],
-            "date": r["date"],
-            "status": r["status"]
-        })
 
-    return jsonify(data)
+# =========================
+# DOCTOR - VER CITAS ASIGNADAS
+# =========================
+@appointments_bp.route('/doctor/appointments/<path:doctor_name>', methods=['GET'])
+def doctor_appointments(doctor_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM appointments
+        WHERE doctor=? AND status='ACTIVA'
+        ORDER BY date ASC
+    """, (doctor_name,))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return jsonify([appointment_to_dict(r) for r in rows])
+
+
+# =========================
+# DOCTOR - MARCAR ASISTENCIA
+# =========================
+@appointments_bp.route('/doctor/appointments/<int:id>/attendance', methods=['PUT'])
+def update_attendance(id):
+    data = request.json
+
+    if not data or not data.get("attendance"):
+        return jsonify({"error": "Falta el estado de asistencia"}), 400
+
+    attendance = data["attendance"]
+    doctor_name = data.get("doctorName")
+
+    if attendance not in ["ASISTIO", "NO_ASISTIO", "PENDIENTE"]:
+        return jsonify({"error": "Estado de asistencia inválido"}), 400
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM appointments WHERE id=?", (id,))
+        appointment = cursor.fetchone()
+
+        if not appointment:
+            return jsonify({"error": "Cita no encontrada"}), 404
+
+        if doctor_name and appointment["doctor"] != doctor_name:
+            return jsonify({"error": "No puedes marcar asistencia de citas de otro doctor."}), 403
+
+        cursor.execute("UPDATE appointments SET attendance=? WHERE id=?", (attendance, id))
+
+        if attendance == "NO_ASISTIO":
+            cursor.execute("UPDATE users SET fine_pending=1 WHERE email=?", (appointment["user"],))
+
+        conn.commit()
+
+        if attendance == "NO_ASISTIO":
+            return jsonify({
+                "message": "Paciente marcado como NO asistió. Se activó multa de $70.000.",
+                "fineAmount": 70000
+            })
+
+        return jsonify({"message": "Asistencia actualizada"})
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Error al actualizar asistencia"}), 500
+
+    finally:
+        conn.close()
 
 
 # =========================
@@ -215,10 +372,21 @@ def update_appointment(id):
     if not new_date:
         return jsonify({"error": "Formato de fecha inválido"}), 400
 
+    actor = get_actor_data()
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
+        cursor.execute("SELECT * FROM appointments WHERE id=?", (id,))
+        appointment = cursor.fetchone()
+
+        if not appointment:
+            return jsonify({"error": "Cita no encontrada"}), 404
+
+        permission_error = validate_manage_permission(appointment, actor)
+        if permission_error:
+            return jsonify({"error": permission_error}), 403
+
         conflict = doctor_has_conflict(conn, data['doctor'], new_date, exclude_id=id)
 
         if conflict:
@@ -233,9 +401,6 @@ def update_appointment(id):
         """, (data['doctor'], data['specialty'], data['date'], id))
 
         conn.commit()
-
-        if cursor.rowcount == 0:
-            return jsonify({"error": "Cita no encontrada"}), 404
 
         return jsonify({"message": "Cita actualizada"})
 

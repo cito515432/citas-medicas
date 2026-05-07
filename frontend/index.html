@@ -1,128 +1,35 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Clínica - Sistema de Citas</title>
-
     <style>
-        /* RESET */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-
-            /* 🔴 NUEVO CENTRADO MÁS ESTABLE */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            min-height: 100vh;
-        }
-
-        /* CONTENEDOR */
-        .container {
-            background: white;
-            padding: 40px 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
-        }
-
-        /* LOGO */
-        .logo {
-            font-size: 42px;
-            font-weight: bold;
-            color: #007BFF;
-        }
-
-        .logo span {
-            color: #28a745;
-        }
-
-        .subtitle {
-            color: #666;
-            margin: 10px 0 20px;
-        }
-
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #555;
-            margin-bottom: 25px;
-        }
-
-        /* BOTONES */
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 10px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .register {
-            background: #28a745;
-        }
-
-        .login {
-            background: #007BFF;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
-
-        footer {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #aaa;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#4facfe,#00f2fe);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:18px}
+        .container{background:white;padding:40px 30px;border-radius:20px;width:90%;max-width:430px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+        .logo{font-size:42px;font-weight:bold;color:#007BFF}.logo span{color:#28a745}.subtitle{color:#666;margin:10px 0 20px}h1{margin-bottom:10px}p{color:#555;margin-bottom:25px;line-height:1.45}.btn{display:block;width:100%;padding:12px;margin:10px 0;border-radius:10px;text-decoration:none;color:white;font-weight:bold;transition:.3s}.register{background:#28a745}.login{background:#007BFF}.doctor{background:#7c3aed}.btn:hover{transform:translateY(-2px);opacity:.9}footer{margin-top:15px;font-size:12px;color:#aaa}
     </style>
 </head>
-
 <body>
-
-<!-- 🔴 TU LÓGICA (NO TOCADA) -->
 <script>
 const user = localStorage.getItem("user");
-
+const role = localStorage.getItem("role");
 if(user){
-    window.location.href = "dashboard.html";
+    if(role === "admin") window.location.href = "admin.html";
+    else if(role === "doctor") window.location.href = "doctor.html";
+    else window.location.href = "dashboard.html";
 }
 </script>
 
 <div class="container">
-
     <div class="logo">Salud<span>Pro</span></div>
     <div class="subtitle">Sistema de gestión médica</div>
-
     <h1>Bienvenido</h1>
-    <p>Agenda, consulta y gestiona tus citas médicas de forma rápida y sencilla</p>
-
+    <p>Agenda, consulta y gestiona tus citas médicas de forma rápida y sencilla.</p>
     <a href="register.html" class="btn register">📝 Registrarse</a>
     <a href="login.html" class="btn login">🔐 Iniciar sesión</a>
-
-    <footer>
-        © 2025 SaludPro
-    </footer>
-
+    <a href="login.html" class="btn doctor">🩺 Ingresar como doctor</a>
+    <footer>© 2026 SaludPro</footer>
 </div>
-
 </body>
 </html>

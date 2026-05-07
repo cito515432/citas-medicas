@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Doctor - SaludPro</title>
+    <style>
+        :root{--primary:#7c3aed;--primary-dark:#5b21b6;--secondary:#06b6d4;--success:#16a34a;--danger:#dc2626;--warning:#f59e0b;--dark:#111827;--muted:#64748b;--light:#f8fafc;--border:#e5e7eb;--shadow:0 20px 45px rgba(15,23,42,.14);--radius:22px}*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:radial-gradient(circle at top left,rgba(124,58,237,.20),transparent 35%),radial-gradient(circle at top right,rgba(6,182,212,.20),transparent 35%),linear-gradient(135deg,#f5f3ff,#ecfeff 50%,#f8fafc);color:var(--dark);padding:24px}.app{width:min(1180px,100%);margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:14px}.brand-icon{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:grid;place-items:center;font-size:28px;color:white;box-shadow:0 12px 25px rgba(124,58,237,.25)}h1{font-size:clamp(24px,4vw,34px)}.brand p{color:var(--muted);margin-top:4px}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.9);color:var(--muted);box-shadow:0 8px 20px rgba(15,23,42,.08);max-width:290px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.btn{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;font-weight:800;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn:hover{transform:translateY(-2px);filter:brightness(.98)}.btn-primary{background:var(--primary);color:white}.btn-light{background:white;border:1px solid var(--border);color:var(--dark)}.btn-danger{background:var(--danger);color:white}.btn-warning{background:var(--warning);color:white}.btn-success{background:var(--success);color:white}.btn-no{background:#991b1b;color:white}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.card{background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.88);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(14px)}.stat{padding:18px}.stat strong{display:block;font-size:30px;margin-top:5px}.stat span{color:var(--muted);font-size:14px}.panel{padding:24px}.panel-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.section-title{font-size:22px;margin-bottom:6px}.section-subtitle{color:var(--muted);font-size:14px}.filters{display:grid;grid-template-columns:1fr 190px;gap:10px;margin-bottom:16px}input,select{width:100%;border:1px solid var(--border);background:var(--light);padding:13px 14px;border-radius:14px;outline:none;font-size:14px}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(124,58,237,.12);background:white}.list{display:grid;gap:12px}.appointment{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:16px;background:var(--light);border:1px solid var(--border);border-radius:18px}.appointment:hover{background:white;box-shadow:0 12px 25px rgba(15,23,42,.08)}.appointment h3{font-size:18px;margin-bottom:8px}.appointment p{color:var(--muted);font-size:14px;line-height:1.6}.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.badge{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900}.badge-active{background:#dcfce7;color:#166534}.badge-pending{background:#fef3c7;color:#92400e}.badge-asistio{background:#dbeafe;color:#1e40af}.badge-no{background:#fee2e2;color:#991b1b}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:270px}.empty,.loading{text-align:center;padding:40px 20px;border-radius:18px;background:#f8fafc;color:var(--muted);border:1px dashed #cbd5e1}.modal-backdrop{position:fixed;inset:0;display:none;justify-content:center;align-items:center;padding:22px;background:rgba(15,23,42,.55);z-index:50}.modal-backdrop.show{display:flex}.modal{width:min(460px,100%);padding:26px}.field{margin-bottom:14px}label{display:block;font-size:13px;font-weight:800;color:#334155;margin-bottom:8px}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.toast{position:fixed;right:24px;bottom:24px;background:#111827;color:white;padding:14px 16px;border-radius:14px;display:none;max-width:390px;box-shadow:var(--shadow);z-index:80}.toast.show{display:block}@media(max-width:900px){body{padding:18px}.topbar,.panel-head{flex-direction:column;align-items:flex-start}.stats{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr}.appointment{grid-template-columns:1fr}.actions{min-width:0;width:100%}}@media(max-width:620px){.stats{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="topbar">
+        <div class="brand"><div class="brand-icon">🩺</div><div><h1>Panel Doctor</h1><p>Consulta, edita y registra asistencia de tus citas asignadas.</p></div></div>
+        <div class="top-actions"><div id="doctorPill" class="pill">Doctor</div><button class="btn btn-light" onclick="loadAppointments()">↻ Actualizar</button><button class="btn btn-danger" onclick="logout()">Cerrar sesión</button></div>
+    </header>
+
+    <section class="stats">
+        <article class="card stat"><span>Citas asignadas</span><strong id="totalCount">0</strong></article>
+        <article class="card stat"><span>Pendientes</span><strong id="pendingCount">0</strong></article>
+        <article class="card stat"><span>Asistieron</span><strong id="attendedCount">0</strong></article>
+        <article class="card stat"><span>No asistieron</span><strong id="noShowCount">0</strong></article>
+    </section>
+
+    <section class="card panel">
+        <div class="panel-head"><div><h2 class="section-title">📋 Mis citas asignadas</h2><p class="section-subtitle">Marca si el paciente asistió o no asistió. Si no asistió, se activa la multa de $70.000 y el paciente no podrá agendar más citas.</p></div><button class="btn btn-primary" onclick="loadAppointments()">Recargar</button></div>
+        <div class="filters"><input id="search" placeholder="Buscar paciente, especialidad o fecha..." oninput="renderAppointments()"><select id="attendanceFilter" onchange="renderAppointments()"><option value="TODAS">Todas</option><option value="PENDIENTE">Pendientes</option><option value="ASISTIO">Asistió</option><option value="NO_ASISTIO">No asistió</option></select></div>
+        <div id="list" class="list"><div class="loading">Cargando citas...</div></div>
+    </section>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="card modal">
+        <h2 class="section-title">✏️ Editar cita asignada</h2>
+        <p class="section-subtitle" style="margin-bottom:16px;">Actualiza los datos de la cita seleccionada.</p>
+        <input type="hidden" id="editId">
+        <div class="field"><label for="editSpecialty">Especialidad</label><select id="editSpecialty" onchange="loadEditDoctors()"></select></div>
+        <div class="field"><label for="editDoctor">Doctor</label><select id="editDoctor"></select></div>
+        <div class="field"><label for="editDate">Fecha y hora</label><input id="editDate" type="datetime-local"></div>
+        <div class="modal-actions"><button class="btn btn-light" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveEdit()">Guardar</button></div>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = "https://citas-medicas-htmz.onrender.com/api";
+const currentUser = localStorage.getItem("user");
+const role = localStorage.getItem("role");
+const doctorName = localStorage.getItem("doctorName");
+let appointments = [];
+let specialties = [];
+let doctorsBySpecialty = {};
+
+if(!currentUser || role !== "doctor" || !doctorName){ alert("Acceso solo para doctores"); window.location.href = "login.html"; }
+document.getElementById("doctorPill").textContent = `🩺 ${doctorName}`;
+
+function showToast(message){ const toast=document.getElementById("toast"); toast.textContent=message; toast.classList.add("show"); setTimeout(()=>toast.classList.remove("show"),3200); }
+function logout(){ localStorage.removeItem("user"); localStorage.removeItem("role"); localStorage.removeItem("doctorName"); localStorage.removeItem("finePending"); window.location.href="login.html"; }
+async function fetchJson(url, options={}){ const res=await fetch(url,options); let data=null; try{data=await res.json()}catch{} if(!res.ok) throw new Error((data&&data.error)||"Error en el servidor"); return data; }
+function escapeText(text){ return String(text ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+function formatDate(value){ const d=new Date(value); if(Number.isNaN(d.getTime())) return value || "Sin fecha"; return d.toLocaleString("es-ES",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); }
+function badgeAttendance(value){ if(value==="ASISTIO") return `<span class="badge badge-asistio">ASISTIÓ</span>`; if(value==="NO_ASISTIO") return `<span class="badge badge-no">NO ASISTIÓ</span>`; return `<span class="badge badge-pending">PENDIENTE</span>`; }
+
+async function loadSpecialties(){ try{ specialties=await fetchJson(`${API_BASE}/specialties`); document.getElementById("editSpecialty").innerHTML=specialties.map(s=>`<option value="${escapeText(s)}">${escapeText(s)}</option>`).join(""); }catch(error){ showToast("No se pudieron cargar especialidades"); } }
+async function getDoctors(specialty){ if(doctorsBySpecialty[specialty]) return doctorsBySpecialty[specialty]; const doctors=await fetchJson(`${API_BASE}/doctors/${encodeURIComponent(specialty)}`); doctorsBySpecialty[specialty]=doctors; return doctors; }
+async function loadEditDoctors(selectedDoctor=""){ const specialty=document.getElementById("editSpecialty").value; const sel=document.getElementById("editDoctor"); const doctors=await getDoctors(specialty); sel.innerHTML=doctors.map(d=>`<option value="${escapeText(d)}">${escapeText(d)}</option>`).join(""); if(selectedDoctor) sel.value=selectedDoctor; }
+
+async function loadAppointments(){
+    document.getElementById("list").innerHTML = `<div class="loading">Cargando citas...</div>`;
+    try{ appointments = await fetchJson(`${API_BASE}/doctor/appointments/${encodeURIComponent(doctorName)}`); updateStats(); renderAppointments(); }
+    catch(error){ document.getElementById("list").innerHTML = `<div class="empty">No se pudieron cargar las citas.<br>${escapeText(error.message)}</div>`; updateStats(); }
+}
+
+function updateStats(){ document.getElementById("totalCount").textContent=appointments.length; document.getElementById("pendingCount").textContent=appointments.filter(c=>(c.attendance||"PENDIENTE")==="PENDIENTE").length; document.getElementById("attendedCount").textContent=appointments.filter(c=>c.attendance==="ASISTIO").length; document.getElementById("noShowCount").textContent=appointments.filter(c=>c.attendance==="NO_ASISTIO").length; }
+function renderAppointments(){
+    const list=document.getElementById("list");
+    const search=document.getElementById("search").value.toLowerCase().trim();
+    const filter=document.getElementById("attendanceFilter").value;
+    const filtered=appointments.filter(c=>{ const att=c.attendance||"PENDIENTE"; const text=`${c.user} ${c.specialty} ${c.date} ${att}`.toLowerCase(); return text.includes(search) && (filter==="TODAS" || att===filter); });
+    if(filtered.length===0){ list.innerHTML=`<div class="empty">No hay citas para mostrar.</div>`; return; }
+    list.innerHTML=filtered.map(c=>`<article class="appointment"><div><h3>${escapeText(c.specialty)}</h3><p>👤 Paciente: <strong>${escapeText(c.user)}</strong><br>🩺 Doctor: ${escapeText(c.doctor)}<br>📅 Fecha: ${escapeText(formatDate(c.date))}</p><div class="badges"><span class="badge badge-active">${escapeText(c.status || "ACTIVA")}</span>${badgeAttendance(c.attendance || "PENDIENTE")}</div></div><div class="actions"><button class="btn btn-warning" onclick="openEdit(${c.id})">Editar</button><button class="btn btn-danger" onclick="deleteAppointment(${c.id})">Eliminar</button><button class="btn btn-success" onclick="markAttendance(${c.id}, 'ASISTIO')">Asistió</button><button class="btn btn-no" onclick="markAttendance(${c.id}, 'NO_ASISTIO')">No asistió</button></div></article>`).join("");
+}
+
+async function markAttendance(id, attendance){
+    const msg = attendance === "NO_ASISTIO" ? "¿Confirmas que el paciente NO asistió? Se activará una multa de $70.000." : "¿Confirmas que el paciente asistió?";
+    if(!confirm(msg)) return;
+    try{ const data=await fetchJson(`${API_BASE}/doctor/appointments/${id}/attendance`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ attendance, doctorName }) }); showToast(data.message || "Asistencia actualizada"); await loadAppointments(); }
+    catch(error){ showToast(error.message || "No se pudo actualizar la asistencia"); }
+}
+
+async function deleteAppointment(id){
+    if(!confirm("¿Seguro que deseas eliminar esta cita asignada?")) return;
+    try{ await fetchJson(`${API_BASE}/appointments/${id}`, { method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ user:currentUser, role:"doctor", doctorName }) }); showToast("Cita eliminada correctamente"); await loadAppointments(); }
+    catch(error){ showToast(error.message || "No se pudo eliminar la cita"); }
+}
+async function openEdit(id){ const cita=appointments.find(c=>c.id===id); if(!cita) return; document.getElementById("editId").value=cita.id; document.getElementById("editSpecialty").value=cita.specialty; document.getElementById("editDate").value=cita.date; await loadEditDoctors(cita.doctor); document.getElementById("modalBackdrop").classList.add("show"); }
+function closeModal(){ document.getElementById("modalBackdrop").classList.remove("show"); }
+async function saveEdit(){
+    const id=document.getElementById("editId").value;
+    const specialty=document.getElementById("editSpecialty").value;
+    const doctor=document.getElementById("editDoctor").value;
+    const date=document.getElementById("editDate").value;
+    if(!id || !specialty || !doctor || !date){ showToast("Completa todos los campos"); return; }
+    try{ await fetchJson(`${API_BASE}/appointments/${id}`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ user:currentUser, role:"doctor", doctorName, specialty, doctor, date }) }); closeModal(); showToast("Cita actualizada correctamente"); await loadAppointments(); }
+    catch(error){ showToast(error.message || "No se pudo editar la cita"); }
+}
+window.addEventListener("click", event=>{ const backdrop=document.getElementById("modalBackdrop"); if(event.target===backdrop) closeModal(); });
+loadSpecialties(); loadAppointments();
+</script>
+</body>
+</html>

@@ -1,145 +1,41 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Login - SaludPro</title>
-
     <style>
-        /* RESET */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            min-height: 100vh;
-        }
-
-        /* CONTENEDOR */
-        .container {
-            background: white;
-            padding: 40px 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
-        }
-
-        /* LOGO */
-        .logo {
-            font-size: 40px;
-            font-weight: bold;
-            color: #007BFF;
-        }
-
-        .logo span {
-            color: #28a745;
-        }
-
-        .subtitle {
-            color: #666;
-            margin: 10px 0 20px;
-        }
-
-        h2 {
-            margin-bottom: 15px;
-        }
-
-        /* INPUTS */
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            outline: none;
-            font-size: 14px;
-        }
-
-        input:focus {
-            border: 1px solid #007BFF;
-            box-shadow: 0 0 5px rgba(0,123,255,0.4);
-        }
-
-        /* BOTÓN */
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 10px;
-            border: none;
-            background: #007BFF;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
-
-        /* LINK */
-        .link {
-            display: block;
-            margin-top: 15px;
-            text-decoration: none;
-            color: #007BFF;
-            font-size: 14px;
-        }
-
-        .link:hover {
-            text-decoration: underline;
-        }
-
-        footer {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #aaa;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#4facfe,#00f2fe);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:18px}
+        .container{background:white;padding:40px 30px;border-radius:20px;width:90%;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+        .logo{font-size:40px;font-weight:bold;color:#007BFF}.logo span{color:#28a745}.subtitle{color:#666;margin:10px 0 20px}h2{margin-bottom:15px}input{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:1px solid #ccc;outline:none;font-size:14px}input:focus{border:1px solid #007BFF;box-shadow:0 0 5px rgba(0,123,255,.4)}button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;background:#007BFF;color:white;font-size:16px;font-weight:bold;cursor:pointer;transition:.3s}button:hover{transform:translateY(-2px);opacity:.9}.link{display:block;margin-top:15px;text-decoration:none;color:#007BFF;font-size:14px}.link:hover{text-decoration:underline}.info{margin-top:16px;text-align:left;background:#eef6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:14px;padding:12px;font-size:13px;line-height:1.45}footer{margin-top:15px;font-size:12px;color:#aaa}
     </style>
 </head>
-
 <body>
-
 <div class="container">
-
     <div class="logo">Salud<span>Pro</span></div>
     <div class="subtitle">Accede a tu cuenta</div>
-
     <h2>Iniciar Sesión</h2>
-
     <input id="email" placeholder="Correo electrónico">
     <input id="password" type="password" placeholder="Contraseña">
-
     <button onclick="login()">Entrar</button>
-
     <a href="register.html" class="link">¿No tienes cuenta? Regístrate</a>
-
-    <footer>
-        © 2025 SaludPro
-    </footer>
-
+    <div class="info">
+        <strong>Doctores de prueba:</strong><br>
+        perez@saludpro.com / 123456<br>
+        gomez@saludpro.com / 123456<br>
+        ruiz@saludpro.com / 123456<br>
+        torres@saludpro.com / 123456<br>
+        lopez@saludpro.com / 123456<br>
+        martinez@saludpro.com / 123456
+    </div>
+    <footer>© 2026 SaludPro</footer>
 </div>
 
-<!-- 🔴 TU LÓGICA (NO TOCADA) -->
 <script>
-async function login() {
+const API_BASE = "https://citas-medicas-htmz.onrender.com/api";
 
-    const email = document.getElementById("email").value;
+async function login(){
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
 
     if(!email || !password){
@@ -147,8 +43,8 @@ async function login() {
         return;
     }
 
-    try {
-        const res = await fetch("https://citas-medicas-htmz.onrender.com/api/login", {
+    try{
+        const res = await fetch(`${API_BASE}/login`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ email, password })
@@ -159,23 +55,25 @@ async function login() {
         if(res.ok){
             localStorage.setItem("user", data.email);
             localStorage.setItem("role", data.role);
+            localStorage.setItem("doctorName", data.doctorName || "");
+            localStorage.setItem("finePending", data.finePending ? "true" : "false");
 
             alert("Bienvenido 👋");
 
             if(data.role === "admin"){
                 window.location.href = "admin.html";
+            } else if(data.role === "doctor"){
+                window.location.href = "doctor.html";
             } else {
                 window.location.href = "dashboard.html";
             }
         } else {
             alert(data.error || "Error al iniciar sesión");
         }
-
-    } catch (error) {
+    } catch(error){
         alert("No se pudo conectar con el servidor");
     }
 }
 </script>
-
 </body>
 </html>
