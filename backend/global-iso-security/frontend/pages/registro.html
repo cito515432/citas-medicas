@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global ISO Security - Registro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background:#0b0b18; font-family: "Segoe UI", sans-serif; }
+    .card-dark { background:#000; border:1px solid #222; border-radius:14px; }
+    .brand { letter-spacing:2px; font-weight:900; color:#fff; line-height:1.2; }
+    .brand small { display:block; color:#bdbdbd; font-weight:400; letter-spacing:3px; font-size:.75rem; }
+    .form-label { color:#9ca3af; font-size:.85rem; }
+    .form-control, .form-select {
+      background:#111827; border:1px solid #333; color:#fff; border-radius:10px;
+    }
+    .form-control:focus, .form-select:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+    .btn-primary { background:#3b82f6; border:none; font-weight:700; border-radius:10px; }
+    .btn-primary:hover { background:#2563eb; }
+    .muted { color:#9ca3af; }
+    .error { color:#f87171; font-size:.85rem; display:none; }
+    a { color:#93c5fd; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+  </style>
+</head>
+
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card card-dark p-4 p-md-5">
+          <div class="text-center mb-4">
+            <div class="brand">
+              GLOBAL<br><small>ISO SECURITY</small>
+            </div>
+            <div class="mt-2 muted">Crea tu cuenta</div>
+          </div>
+
+          <div id="registroError" class="error mb-3"></div>
+
+          <form id="formRegistro" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Nombre completo</label>
+              <input class="form-control" id="regNombre" placeholder="Tu nombre" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Correo</label>
+              <input type="email" class="form-control" id="regEmail" placeholder="correo@ejemplo.com" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="regPassword" placeholder="Mínimo 8 caracteres" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Rol</label>
+              <select class="form-select" id="regRol" required>
+                <option value="">Selecciona un rol</option>
+                <option value="5">USUARIO (dueño de empresa)</option>
+                <option value="4">CAPACITADOR</option>
+                <option value="2">IMPLEMENTADOR</option>
+                <option value="3">AUDITOR</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Empresa</label>
+              <select class="form-select" id="regEmpresa" required>
+                <option value="">Selecciona una empresa</option>
+              </select>
+              <div class="form-text muted">Si no aparece tu empresa, pídele al administrador que la registre.</div>
+            </div>
+
+            <button class="btn btn-primary w-100 py-2" type="submit" id="btnRegistrar">
+              <i class="bi bi-person-plus-fill me-2"></i>Registrarse
+            </button>
+
+            <div class="text-center mt-3 muted">
+              ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+            </div>
+          </form>
+        </div>
+
+        <div class="text-center mt-3 muted" style="font-size:.85rem;">
+          Si el registro falla, puede ser por validación del backend.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = "/api";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarEmpresas();
+      const form = document.getElementById("formRegistro");
+      form.addEventListener("submit", registrarUsuario);
+    });
+
+    async function cargarEmpresas() {
+      const select = document.getElementById("regEmpresa");
+      try {
+        const res = await fetch(`${API_BASE_URL}/empresas`, { method: "GET" });
+        const texto = await res.text();
+        let empresas = [];
+        try { empresas = texto ? JSON.parse(texto) : []; } catch { empresas = []; }
+
+        if (!res.ok || !Array.isArray(empresas)) return;
+
+        select.innerHTML = `<option value="">Selecciona una empresa</option>` + empresas
+          .map(e => `<option value="${e.id}">${escapeHtml(e.nombre || "Empresa")}</option>`)
+          .join("");
+      } catch {}
+    }
+
+    async function registrarUsuario(e) {
+      e.preventDefault();
+      ocultarError();
+
+      const nombre = (document.getElementById("regNombre").value || "").trim();
+      const email = (document.getElementById("regEmail").value || "").trim();
+      const password = (document.getElementById("regPassword").value || "").trim();
+      const rolId = document.getElementById("regRol").value;
+      const empresaId = document.getElementById("regEmpresa").value;
+
+      if (!nombre || !email || !password || !rolId || !empresaId) {
+        mostrarError("Todos los campos son obligatorios.");
+        return;
+      }
+      if (password.length < 8) {
+        mostrarError("La contraseña debe tener al menos 8 caracteres.");
+        return;
+      }
+
+      // Nota: el backend de ustedes parece exigir rawPassword.
+      const payload = {
+        nombre,
+        email,
+        rol_id: Number(rolId),
+        empresa_id: Number(empresaId),
+        rawPassword: password
+      };
+
+      const btn = document.getElementById("btnRegistrar");
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/usuarios`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const texto = await res.text();
+        let data = {};
+        try { data = texto ? JSON.parse(texto) : {}; } catch {}
+
+        if (!res.ok) {
+          console.error("POST /usuarios", res.status, texto);
+          mostrarError(data.message || data.error || texto || "No se pudo registrar.");
+          return;
+        }
+
+        alert("Registro exitoso. Ahora inicia sesión.");
+        window.location.href = "login.html";
+      } catch (err) {
+        console.error(err);
+        mostrarError("Error de conexión con el servidor.");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function mostrarError(msg) {
+      const el = document.getElementById("registroError");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    function ocultarError() {
+      const el = document.getElementById("registroError");
+      el.textContent = "";
+      el.style.display = "none";
+    }
+
+    function escapeHtml(texto) {
+      return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: globaliso_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-globalisosecurity}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456789}
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Si tienes un respaldo completo .sql, colócalo dentro de database/init/
+      # ANTES del primer docker compose up. MySQL solo importa scripts en una BD nueva.
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-123456789}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - globaliso_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: globaliso_backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-globalisosecurity}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456789}
+      JWT_SECRET: ${JWT_SECRET:-GlobalIsoSecurity2026ClaveSecretaCambiarEnProduccion}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+    expose:
+      - "8081"
+    networks:
+      - globaliso_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: globaliso_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    networks:
+      - globaliso_net
+
+volumes:
+  mysql_data:
+
+networks:
+  globaliso_net:

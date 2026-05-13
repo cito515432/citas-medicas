@@ -1,0 +1,318 @@
+body {
+    background-color: #1a1a2e;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    min-width: 230px;
+    background-color: #000000;
+    color: #ffffff;
+    height: 100vh;
+}
+
+.logo-box {
+    background-color: #1a1a2e;
+    border-radius: 8px;
+    padding: 10px;
+    display: inline-block;
+}
+
+.logo-title {
+    color: #ffffff;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.logo-title small {
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 3px;
+    display: block;
+}
+
+.badge-role {
+    background-color: #3b82f6;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.user-name {
+    color: #aaaaaa;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.btn-menu {
+    background-color: #1a1a2e;
+    color: #ffffff;
+    border: 1px solid #222;
+    text-align: left;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-menu:hover, .btn-menu.active {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+    font-weight: 600;
+}
+
+.btn-logout {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #444;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #f28b82;
+    border-color: #f28b82;
+    color: #000;
+}
+
+/* CONTENIDO */
+.main-content {
+    background-color: #1a1a2e;
+    overflow-y: auto;
+}
+
+.section-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+}
+
+.section-sub {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+/* TARJETAS STAT */
+.stat-card {
+    background-color: #000000;
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #222;
+}
+
+.stat-icon { font-size: 2rem; }
+.stat-label { color: #aaaaaa; font-size: 0.8rem; margin: 0; }
+.stat-number { color: #ffffff; font-weight: 700; margin: 0; font-size: 1.5rem; }
+
+/* TARJETAS INFO */
+.info-card {
+    background-color: #000000;
+    border-radius: 10px;
+    border: 1px solid #222;
+}
+
+/* ESTADO BADGES */
+.badge-estado {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: inline-block;
+}
+
+.badge-estado.en-proceso { background-color: #f59e0b; color: #000; }
+.badge-estado.firmado { background-color: #10b981; color: #fff; }
+.badge-estado.cerrado { background-color: #6b7280; color: #fff; }
+
+/* BOTON CREAR */
+.btn-crear {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 18px;
+    transition: all 0.2s;
+}
+
+.btn-crear:hover {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+/* FILTROS */
+.btn-filtro {
+    background-color: #000;
+    color: #aaa;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 0.82rem;
+    transition: all 0.2s;
+}
+
+.btn-filtro:hover, .btn-filtro.active {
+    background-color: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
+
+/* CHECKLIST */
+.table-wrapper {
+    background-color: #000000;
+    border-radius: 10px;
+    border: 1px solid #222;
+    overflow: hidden;
+}
+
+.anexo-header {
+    background-color: #111111;
+    color: #3b82f6;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 12px 20px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #222;
+    text-transform: uppercase;
+}
+
+.checklist-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid #1a1a2e;
+    transition: background 0.2s;
+}
+
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item:hover { background-color: #0d0d1a; }
+
+.control-title {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.control-desc {
+    color: #888;
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+/* BOTONES ESTADO */
+.btn-estado {
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background-color: #1a1a2e;
+    color: #aaa;
+    width: 100%;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.btn-estado:hover { border-color: #555; color: #fff; }
+
+.btn-estado.cumple.active {
+    background-color: #10b981;
+    color: #fff;
+    border-color: #10b981;
+    font-weight: 600;
+}
+
+.btn-estado.no-cumple.active {
+    background-color: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+    font-weight: 600;
+}
+
+.btn-estado.en-proceso.active {
+    background-color: #f59e0b;
+    color: #000;
+    border-color: #f59e0b;
+    font-weight: 600;
+}
+
+/* INPUT DARK */
+.input-dark {
+    background-color: #1a1a2e;
+    border: 1px solid #333;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.input-dark:focus {
+    background-color: #1a1a2e;
+    border-color: #3b82f6;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(59,130,246,0.3);
+}
+
+.input-dark::placeholder { color: #555; }
+
+/* PROCESO */
+.proceso-card {
+    background-color: #000000;
+    border-radius: 10px;
+    border: 1px solid #222;
+    transition: border-color 0.2s;
+}
+
+.proceso-card:hover { border-color: #3b82f6; }
+
+/* BADGES */
+.badge-completado {
+    background-color: #10b981;
+    color: #fff;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.badge-en-proceso {
+    background-color: #f59e0b;
+    color: #000;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.badge-pendiente {
+    background-color: #374151;
+    color: #fff;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* PERFIL */
+.perfil-avatar {
+    width: 75px;
+    height: 75px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: #fff;
+}

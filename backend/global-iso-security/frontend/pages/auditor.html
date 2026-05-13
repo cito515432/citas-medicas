@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global ISO Security - Auditor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #1a1a2e; font-family: 'Segoe UI', sans-serif; }
+        .sidebar { width: 230px; min-width: 230px; background-color: #000; height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; padding: 20px 12px; }
+        .logo-box { background-color: #1a1a2e; border-radius: 8px; padding: 10px 14px; text-align: center; margin-bottom: 12px; }
+        .logo-title { color: #fff; font-weight: 900; font-size: 1rem; letter-spacing: 2px; line-height: 1.5; display: block; }
+        .logo-title small { font-size: 0.62rem; font-weight: 400; letter-spacing: 3px; display: block; color: #ccc; }
+        .sidebar-info { text-align: center; margin-bottom: 20px; }
+        .badge-role { background-color: #8b5cf6; color: #fff; font-size: 0.72rem; padding: 3px 12px; border-radius: 20px; font-weight: 600; display: inline-block; }
+        .user-name { color: #aaa; font-size: 0.8rem; margin-top: 4px; }
+        .btn-menu { background-color: #1a1a2e; color: #ccc; border: 1px solid #222; text-align: left; padding: 10px 14px; font-size: 0.85rem; border-radius: 8px; width: 100%; margin-bottom: 6px; transition: all 0.2s; cursor: pointer; }
+        .btn-menu:hover { background-color: #2d1b69; color: #fff; border-color: #8b5cf6; }
+        .btn-menu.active { background-color: #8b5cf6; color: #fff; border-color: #8b5cf6; font-weight: 600; }
+        .btn-logout { background-color: transparent; color: #ccc; border: 1px solid #444; font-size: 0.85rem; border-radius: 8px; width: 100%; padding: 9px; cursor: pointer; transition: all 0.2s; margin-top: auto; }
+        .btn-logout:hover { background-color: #f28b82; border-color: #f28b82; color: #000; }
+        .main-content { margin-left: 230px; padding: 28px 32px; min-height: 100vh; background-color: #1a1a2e; }
+        .seccion { display: none; }
+        .seccion.activa { display: block; }
+        .section-title { color: #fff; font-weight: 700; font-size: 1.6rem; margin-bottom: 4px; }
+        .section-sub { color: #888; font-size: 0.88rem; margin-bottom: 24px; }
+        .stat-card { background-color: #000; border: 1px solid #222; border-radius: 10px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; }
+        .stat-icon { font-size: 2rem; }
+        .stat-label { color: #888; font-size: 0.78rem; margin: 0; }
+        .stat-number { color: #fff; font-weight: 700; font-size: 1.6rem; margin: 0; }
+        .info-card { background-color: #000; border: 1px solid #222; border-radius: 10px; padding: 20px 24px; }
+        .btn-crear { background-color: #8b5cf6; color: #fff; border: none; font-weight: 600; border-radius: 8px; padding: 8px 18px; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
+        .btn-crear:hover { background-color: #7c3aed; }
+        .btn-volver { background-color: transparent; color: #8b5cf6; border: 1px solid #8b5cf6; font-weight: 600; border-radius: 8px; padding: 7px 16px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+        .btn-volver:hover { background-color: #8b5cf6; color: #fff; }
+        .checklist-box { background-color: #000; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+        .anexo-header { background-color: #0d0d1d; color: #8b5cf6; font-weight: 700; font-size: 0.85rem; padding: 12px 20px; text-transform: uppercase; border-bottom: 1px solid #1a1a2e; }
+        .checklist-item { padding: 18px 20px; border-bottom: 1px solid #111; transition: background 0.2s; }
+        .checklist-item:last-child { border-bottom: none; }
+        .checklist-item:hover { background-color: #0a0a1a; }
+        .control-title { color: #fff; font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+        .control-desc { color: #777; font-size: 0.82rem; margin: 0; }
+        .btn-estado { font-size: 0.82rem; padding: 7px 18px; border-radius: 6px; border: 1px solid #333; background-color: #1a1a2e; color: #aaa; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+        .btn-estado:hover { border-color: #555; color: #fff; }
+        .btn-estado.cumple.active { background-color: #10b981; color: #fff; border-color: #10b981; }
+        .btn-estado.no-cumple.active { background-color: #ef4444; color: #fff; border-color: #ef4444; }
+        .btn-filtro { background-color: #000; color: #888; border: 1px solid #333; border-radius: 20px; padding: 5px 16px; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+        .btn-filtro:hover, .btn-filtro.active { background-color: #8b5cf6; color: #fff; border-color: #8b5cf6; }
+        .badge-estado { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-estado.cumple { background-color: #10b981; color: #fff; }
+        .badge-estado.no-cumple { background-color: #ef4444; color: #fff; }
+        .badge-estado.pendiente { background-color: #374151; color: #fff; }
+        .empresa-card { background-color: #000; border: 1px solid #222; border-radius: 10px; padding: 16px 20px; transition: all 0.2s; }
+        .empresa-card.seleccionada { border-color: #8b5cf6; background-color: #1a0a3e; }
+        .perfil-avatar { width: 72px; height: 72px; background-color: #8b5cf6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; flex-shrink: 0; }
+        .form-label-dark { color: #888; font-size: 0.82rem; margin-bottom: 4px; display: block; }
+        .form-control-dark { background-color: #111827; border: 1px solid #333; color: #fff; border-radius: 8px; padding: 9px 12px; font-size: 0.88rem; width: 100%; }
+        .form-control-dark:disabled { background-color: #0d0d1a; color: #555; }
+        .alerta-info { background-color: #1a1a3e; border: 1px solid #8b5cf6; border-radius: 10px; padding: 16px 20px; color: #ccc; font-size: 0.88rem; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo-box">
+        <span class="logo-title">GLOBAL<small>ISO SECURITY</small></span>
+    </div>
+    <div class="sidebar-info">
+        <span class="badge-role">Auditor</span>
+        <p class="user-name" id="nombreAuditor">Auditor</p>
+    </div>
+    <nav>
+        <button class="btn-menu active" onclick="mostrarSeccion('dashboard', this)">
+            <i class="bi bi-grid-fill me-2"></i>Dashboard
+        </button>
+        <button class="btn-menu" onclick="mostrarSeccion('empresas', this)">
+            <i class="bi bi-building me-2"></i>Empresas
+        </button>
+        <button class="btn-menu" onclick="mostrarSeccion('procesos', this)">
+            <i class="bi bi-diagram-3-fill me-2"></i>Procesos
+        </button>
+        <button class="btn-menu" onclick="mostrarSeccion('perfil', this)">
+            <i class="bi bi-person-circle me-2"></i>Mi Perfil
+        </button>
+    </nav>
+    <button class="btn-logout" id="btnLogout">
+        <i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión
+    </button>
+</div>
+
+<div class="main-content">
+
+    <!-- ══════════════════════ DASHBOARD ══════════════════════ -->
+    <div id="seccion-dashboard" class="seccion activa">
+        <h2 class="section-title">Dashboard</h2>
+        <p class="section-sub">Resumen de tu auditoría asignada.</p>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-clipboard-check stat-icon text-success"></i>
+                    <div>
+                        <p class="stat-label">Controles Cumple</p>
+                        <h4 class="stat-number" id="totalCumple">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-clipboard-x stat-icon text-danger"></i>
+                    <div>
+                        <p class="stat-label">No Cumple</p>
+                        <h4 class="stat-number" id="totalNoCumple">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-hourglass-split stat-icon text-warning"></i>
+                    <div>
+                        <p class="stat-label">Pendientes</p>
+                        <h4 class="stat-number" id="totalPendiente">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-building stat-icon" style="color:#8b5cf6"></i>
+                    <div>
+                        <p class="stat-label">Empresas Auditadas</p>
+                        <h4 class="stat-number" id="empresasAuditadas">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card mb-3">
+            <h5 class="text-white mb-3">
+                <i class="bi bi-building me-2" style="color:#8b5cf6"></i>Empresa en Auditoría
+            </h5>
+            <!-- Se rellena dinámicamente -->
+            <div id="empresaSeleccionadaInfo">
+                <div class="alerta-info">
+                    <i class="bi bi-hourglass-split me-2" style="color:#8b5cf6"></i>Cargando empresa asignada...
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h5 class="text-white mb-3">
+                <i class="bi bi-info-circle-fill me-2" style="color:#8b5cf6"></i>Estado General
+            </h5>
+            <p class="text-white mb-1"><strong>Rol:</strong> Auditor ISO 27001</p>
+            <p class="text-white mb-1"><strong>Función:</strong> Verificar el cumplimiento de controles ISO 27001</p>
+            <p class="text-white mb-0"><strong>Sistema:</strong> Operativo</p>
+        </div>
+    </div>
+
+    <!-- ══════════════════════ EMPRESAS ══════════════════════ -->
+    <div id="seccion-empresas" class="seccion">
+
+        <!-- Vista lista -->
+        <div id="vistaListaEmpresas">
+            <h2 class="section-title">Empresas</h2>
+            <p class="section-sub">Tu empresa asignada para auditar el checklist ISO 27001.</p>
+            <div id="listaEmpresas" class="row g-3">
+                <div class="col-12">
+                    <div class="alerta-info">
+                        <i class="bi bi-hourglass-split me-2"></i>Cargando empresa...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista checklist -->
+        <div id="vistaChecklist" style="display:none;">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="section-title">Auditoría Checklist ISO 27001</h2>
+                    <p class="section-sub mb-0">
+                        Empresa: <strong style="color:#8b5cf6" id="empresaChecklist">—</strong>
+                    </p>
+                </div>
+                <button class="btn-volver" onclick="volverAEmpresas()">
+                    <i class="bi bi-arrow-left me-1"></i>Volver
+                </button>
+            </div>
+
+            <div class="d-flex gap-2 mb-4 flex-wrap">
+                <button class="btn-filtro active" onclick="filtrarItems('todos', this)">Todos</button>
+                <button class="btn-filtro" onclick="filtrarItems('cumple', this)">Cumple</button>
+                <button class="btn-filtro" onclick="filtrarItems('no-cumple', this)">No Cumple</button>
+                <button class="btn-filtro" onclick="filtrarItems('pendiente', this)">Pendiente</button>
+            </div>
+
+            <!-- Aquí el JS renderiza todos los anexos ISO 27001 -->
+            <div class="checklist-box" id="checklistContenido"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════ PROCESOS ══════════════════════ -->
+    <div id="seccion-procesos" class="seccion">
+        <h2 class="section-title">Procesos</h2>
+        <p class="section-sub">Estado de progreso de tu auditoría.</p>
+
+        <div id="alertaProcesos" class="alerta-info mb-4">
+            <i class="bi bi-hourglass-split me-2" style="color:#8b5cf6"></i>
+            Cargando datos del proceso...
+        </div>
+
+        <div id="contenidoProcesos" style="display:none;">
+            <div class="info-card mb-4">
+                <h5 class="text-white mb-3">
+                    <i class="bi bi-building me-2" style="color:#8b5cf6"></i>
+                    <span id="procesoEmpresaNombre">—</span>
+                </h5>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-clipboard-check stat-icon text-success"></i>
+                            <div>
+                                <p class="stat-label">Cumple</p>
+                                <h4 class="stat-number" id="procesoCumple">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-clipboard-x stat-icon text-danger"></i>
+                            <div>
+                                <p class="stat-label">No Cumple</p>
+                                <h4 class="stat-number" id="procesoNoCumple">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-hourglass-split stat-icon text-warning"></i>
+                            <div>
+                                <p class="stat-label">Pendientes</p>
+                                <h4 class="stat-number" id="procesoPendiente">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-bar-chart-fill stat-icon" style="color:#8b5cf6"></i>
+                            <div>
+                                <p class="stat-label">Progreso</p>
+                                <h4 class="stat-number" id="procesoPorcentaje">0%</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-muted">Avance actual (controles evaluados)</small>
+                        <small style="color:#8b5cf6; font-weight:600;" id="procesoPorcentajeBarra">0%</small>
+                    </div>
+                    <div class="progress" style="background-color:#1a1a2e; border-radius:10px; height:12px;">
+                        <div class="progress-bar" id="barraProceso"
+                             style="width:0%; background-color:#8b5cf6; border-radius:10px; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h5 class="text-white mb-3">
+                    <i class="bi bi-pen-fill me-2" style="color:#8b5cf6"></i>Firma de Auditoría
+                </h5>
+                <p class="text-white-50 mb-3">Al firmar confirmas que revisaste el checklist completo de esta empresa.</p>
+                <button class="btn-crear" onclick="firmarAuditoria()">
+                    <i class="bi bi-send-fill me-1"></i>Firmar Auditoría
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════ PERFIL ══════════════════════ -->
+    <div id="seccion-perfil" class="seccion">
+        <h2 class="section-title">Mi Perfil</h2>
+        <p class="section-sub">Información personal del auditor.</p>
+        <div class="info-card">
+            <div class="d-flex align-items-center gap-4 mb-4">
+                <div class="perfil-avatar"><i class="bi bi-person-fill"></i></div>
+                <div>
+                    <h5 class="text-white mb-1" id="perfilNombre">Auditor</h5>
+                    <span class="badge-role">Auditor</span>
+                </div>
+            </div>
+            <hr style="border-color:#222;">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-dark">Nombre completo</label>
+                    <input type="text" class="form-control-dark" id="perfilNombreInput" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-dark">Correo electrónico</label>
+                    <input type="email" class="form-control-dark" id="perfilEmail" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-dark">Rol</label>
+                    <input type="text" class="form-control-dark" value="Auditor ISO 27001" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/auditor.js"></script>
+</body>
+</html>

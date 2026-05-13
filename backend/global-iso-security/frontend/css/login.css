@@ -1,0 +1,82 @@
+body {
+    background-color: #1a1a2e;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.login-wrapper {
+    background-color: #1a1a2e;
+}
+
+.login-card {
+    background-color: #000000;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.login-title {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.login-title span {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 4px;
+}
+
+h2 {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.login-subtitle {
+    color: #aaaaaa;
+    font-size: 0.85rem;
+}
+
+.login-label {
+    color: #ffffff;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.login-input {
+    background-color: #1a1a2e;
+    border: 1px solid #444;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+.login-input:focus {
+    background-color: #1a1a2e;
+    border-color: #f28b82;
+    color: #ffffff;
+    box-shadow: 0 0 5px rgba(242, 139, 130, 0.4);
+}
+
+.login-input::placeholder {
+    color: #666;
+}
+
+.btn-login {
+    background-color: #1a1a2e;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    letter-spacing: 2px;
+    padding: 10px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #f28b82;
+    border-color: #f28b82;
+    color: #000000;
+}

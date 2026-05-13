@@ -1,0 +1,22 @@
+# Dockerfile optimizado para Render: backend Spring Boot.
+# Render normalmente expone el puerto 10000 por la variable PORT.
+
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+WORKDIR /app
+
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
+
+COPY src ./src
+RUN mvn -B clean package -DskipTests
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+ENV PORT=10000
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 10000
+
+CMD ["sh", "-c", "if [ -z \"$SPRING_DATASOURCE_URL\" ] && [ -n \"$MYSQL_HOSTPORT\" ]; then export SPRING_DATASOURCE_URL=\"jdbc:mysql://${MYSQL_HOSTPORT}/${MYSQL_DATABASE:-globalisosecurity}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC\"; fi; java -jar /app/app.jar"]

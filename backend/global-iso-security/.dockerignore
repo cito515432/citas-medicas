@@ -1,0 +1,8 @@
+.git
+.env
+**/target
+**/*.class
+**/*.jar.original
+**/node_modules
+**/nbproject/private
+.DS_Store

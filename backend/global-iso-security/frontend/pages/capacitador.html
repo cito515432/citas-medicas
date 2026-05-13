@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global ISO Security - Capacitador</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .sidebar {
+      width: 230px;
+      min-width: 230px;
+      background-color: #000;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 12px;
+      z-index: 100;
+    }
+
+    .logo-box {
+      background-color: #1a1a2e;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .logo-title {
+      color: #fff;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      line-height: 1.5;
+      display: block;
+    }
+
+    .logo-title small {
+      font-size: 0.62rem;
+      font-weight: 400;
+      letter-spacing: 3px;
+      display: block;
+      color: #ccc;
+    }
+
+    .sidebar-info {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .badge-role {
+      font-size: 0.72rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .badge-role.capacitador {
+      background-color: #10b981;
+      color: #fff;
+    }
+
+    .user-name {
+      color: #aaa;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .btn-menu {
+      background-color: #1a1a2e;
+      color: #ccc;
+      border: 1px solid #222;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 6px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-menu:hover {
+      background-color: #064e3b;
+      color: #fff;
+      border-color: #10b981;
+    }
+
+    .btn-menu.active {
+      background-color: #10b981;
+      color: #fff;
+      border-color: #10b981;
+      font-weight: 600;
+    }
+
+    .btn-logout {
+      background-color: transparent;
+      color: #ccc;
+      border: 1px solid #444;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      width: 100%;
+      padding: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: auto;
+    }
+
+    .btn-logout:hover {
+      background-color: #f28b82;
+      border-color: #f28b82;
+      color: #000;
+    }
+
+    .main-content {
+      margin-left: 230px;
+      padding: 28px 32px;
+      min-height: 100vh;
+      background-color: #1a1a2e;
+    }
+
+    .seccion { display: none; }
+    .seccion.activa { display: block; }
+
+    .section-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin-bottom: 4px;
+    }
+
+    .section-sub {
+      color: #888;
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+    }
+
+    .info-card {
+      background-color: #000;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+
+    .btn-modulo {
+      background-color: #111827;
+      color: #ccc;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-modulo:hover,
+    .btn-modulo.active {
+      background-color: #10b981;
+      color: #fff;
+      border-color: #10b981;
+    }
+
+    .visor-contenido {
+      background-color: #0d0d1d;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 18px;
+      min-height: 300px;
+    }
+
+    .embed-frame {
+      width: 100%;
+      height: 620px;
+      border: none;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+
+    .perfil-avatar {
+      width: 72px;
+      height: 72px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .form-label-dark {
+      color: #888;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .form-control-dark {
+      background-color: #111827;
+      border: 1px solid #333;
+      color: #fff;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.88rem;
+      width: 100%;
+    }
+
+    .form-control-dark:disabled {
+      background-color: #0d0d1a;
+      color: #555;
+    }
+
+    .modulo-texto h5 {
+      color: #10b981;
+      font-size: 1rem;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    .modulo-texto p,
+    .modulo-texto li {
+      color: #ddd;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .modulo-texto ul {
+      padding-left: 18px;
+      margin-bottom: 14px;
+    }
+
+    hr {
+      border-color: #222;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo-box">
+      <span class="logo-title">GLOBAL<small>ISO SECURITY</small></span>
+    </div>
+
+    <div class="sidebar-info">
+      <span class="badge-role capacitador">Capacitador</span>
+      <p class="user-name" id="nombreCapacitadorSidebar">Capacitador</p>
+    </div>
+
+    <nav>
+      <button class="btn-menu active" onclick="mostrarSeccion('modulos', this)">
+        <i class="bi bi-journal-bookmark-fill me-2"></i>Módulos
+      </button>
+
+      <button class="btn-menu" onclick="mostrarSeccion('perfil', this)">
+        <i class="bi bi-person-circle me-2"></i>Mi Perfil
+      </button>
+    </nav>
+
+    <button class="btn-logout" id="btnLogout">
+      <i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión
+    </button>
+  </div>
+
+  <div class="main-content">
+
+    <!-- MODULOS -->
+    <div id="seccion-modulos" class="seccion activa">
+      <h2 class="section-title">Módulos de Capacitación</h2>
+      <p class="section-sub">Selecciona un módulo para ver su contenido.</p>
+
+      <div class="info-card mb-4">
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn-modulo active" onclick="verModulo(1, this)">Módulo 1</button>
+          <button class="btn-modulo" onclick="verModulo(2, this)">Módulo 2</button>
+          <button class="btn-modulo" onclick="verModulo(3, this)">Módulo 3</button>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h4 class="text-white mb-2" id="tituloModuloActivo">Módulo 1: Fundamentos de ISO 27001</h4>
+        <p class="text-muted mb-3" id="descripcionModuloActivo">Conceptos básicos para comprender el Sistema de Gestión de Seguridad de la Información.</p>
+        <div class="visor-contenido" id="contenidoModuloActivo"></div>
+      </div>
+    </div>
+
+    <!-- PERFIL -->
+    <div id="seccion-perfil" class="seccion">
+      <h2 class="section-title">Mi Perfil</h2>
+      <p class="section-sub">Información del capacitador.</p>
+
+      <div class="info-card">
+        <div class="d-flex align-items-center gap-4 mb-4">
+          <div class="perfil-avatar"><i class="bi bi-person-fill"></i></div>
+          <div>
+            <h5 class="text-white mb-1" id="perfilNombreTitulo">Capacitador</h5>
+            <span class="badge-role capacitador">Capacitador</span>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label-dark">Nombre completo</label>
+            <input type="text" class="form-control-dark" id="perfilNombreInput" disabled value="Capacitador">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label-dark">Correo electrónico</label>
+            <input type="email" class="form-control-dark" id="perfilEmailInput" disabled value="capacitador@globaliso.com">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label-dark">Empresa asignada</label>
+            <input type="text" class="form-control-dark" id="perfilEmpresaInput" disabled value="Empresa asignada">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label-dark">Rol</label>
+            <input type="text" class="form-control-dark" disabled value="Capacitador ISO 27001">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../js/capacitador.js"></script>
+</body>
+</html>

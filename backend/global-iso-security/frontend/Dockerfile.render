@@ -1,0 +1,16 @@
+# Dockerfile para frontend en Render Free con Nginx.
+# Usa PORT y BACKEND_URL para generar la configuración en tiempo de arranque.
+
+FROM nginx:1.27-alpine
+
+RUN apk add --no-cache gettext
+
+COPY nginx.render.template.conf /etc/nginx/templates/default.conf.template
+COPY . /usr/share/nginx/html
+
+ENV PORT=10000
+ENV BACKEND_URL=https://globaliso-backend-cito515432.onrender.com
+
+EXPOSE 10000
+
+CMD ["/bin/sh", "-c", "envsubst '$$PORT $$BACKEND_URL' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]

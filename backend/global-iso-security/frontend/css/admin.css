@@ -1,0 +1,324 @@
+body {
+    background-color: #1a1a2e;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    min-width: 230px;
+    background-color: #000000;
+    color: #ffffff;
+    height: 100vh;
+}
+
+.logo-box {
+    background-color: #1a1a2e;
+    border-radius: 8px;
+    padding: 10px;
+    display: inline-block;
+}
+
+.logo-title {
+    color: #ffffff;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.logo-title small {
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 3px;
+    display: block;
+}
+
+.badge-role {
+    background-color: #f28b82;
+    color: #000;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.user-name {
+    color: #aaaaaa;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.btn-menu {
+    background-color: #1a1a2e;
+    color: #ffffff;
+    border: 1px solid #222;
+    text-align: left;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-menu:hover, .btn-menu.active {
+    background-color: #f28b82;
+    color: #000000;
+    border-color: #f28b82;
+    font-weight: 600;
+}
+
+.btn-logout {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #444;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #f28b82;
+    border-color: #f28b82;
+    color: #000;
+}
+
+/* CONTENIDO PRINCIPAL */
+.main-content {
+    background-color: #1a1a2e;
+    overflow-y: auto;
+}
+
+.section-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+/* BOTÓN CREAR */
+.btn-crear {
+    background-color: #f28b82;
+    color: #000000;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 18px;
+    transition: all 0.2s;
+}
+
+.btn-crear:hover {
+    background-color: #e07068;
+    color: #000;
+}
+
+/* TARJETAS ESTADÍSTICAS */
+.stat-card {
+    background-color: #000000;
+    border-radius: 10px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #222;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #f28b82;
+}
+
+.stat-label {
+    color: #aaaaaa;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.stat-number {
+    color: #ffffff;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* TABLA */
+.table-wrapper {
+    background-color: #000000;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #222;
+}
+
+.table {
+    color: #ffffff;
+    margin: 0;
+}
+
+.table thead th {
+    background-color: #111111;
+    color: #f28b82;
+    border-color: #222;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 16px;
+}
+
+.table tbody td {
+    border-color: #222;
+    padding: 12px 16px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.table tbody tr:hover {
+    background-color: #1a1a2e;
+}
+
+/* BADGES ROLES */
+.badge-rol {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-rol.implementador { background-color: #3b82f6; color: #fff; }
+.badge-rol.auditor { background-color: #8b5cf6; color: #fff; }
+.badge-rol.capacitador { background-color: #10b981; color: #fff; }
+.badge-rol.administrador { background-color: #f28b82; color: #000; }
+
+/* BADGES ESTADO */
+.badge-estado {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-estado.activo { background-color: #10b981; color: #fff; }
+.badge-estado.inactivo { background-color: #6b7280; color: #fff; }
+
+/* BOTONES ACCIONES */
+.btn-accion-editar {
+    background-color: #f59e0b;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    margin-right: 4px;
+}
+
+.btn-accion-editar:hover { background-color: #d97706; }
+
+.btn-accion-eliminar {
+    background-color: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+}
+
+.btn-accion-eliminar:hover { background-color: #dc2626; }
+
+/* REPORTES */
+.reporte-card {
+    background-color: #000000;
+    border-radius: 10px;
+    color: #ffffff;
+    border: 1px solid #222;
+}
+
+.reporte-icon {
+    font-size: 2.5rem;
+    color: #f28b82;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.reporte-label {
+    color: #cccccc;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* ===== NUEVO (NO MODIFICA NADA DE ARRIBA) ===== */
+
+/* BADGES ESTADO SERVICIO */
+.badge-servicio {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-servicio.borrador {
+    background-color: #6b7280;
+    color: #fff;
+}
+
+.badge-servicio.en-proceso {
+    background-color: #f59e0b;
+    color: #000;
+}
+
+.badge-servicio.firmado {
+    background-color: #8b5cf6;
+    color: #fff;
+}
+
+.badge-servicio.cerrado {
+    background-color: #10b981;
+    color: #fff;
+}
+
+/* CONFIGURACIÓN */
+.config-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.config-label {
+    color: #aaaaaa;
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.config-input {
+    background-color: #111111;
+    border: 1px solid #222;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    padding: 10px 12px;
+}
+
+.config-input:focus {
+    background-color: #111111;
+    color: #ffffff;
+    border-color: #f28b82;
+    box-shadow: 0 0 0 0.2rem rgba(242, 139, 130, 0.15);
+}
+
+.config-input::placeholder {
+    color: #777777;
+}
+
+.config-input option {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.config-switch .form-check-input {
+    background-color: #111111;
+    border-color: #444;
+    cursor: pointer;
+}
+
+.config-switch .form-check-input:checked {
+    background-color: #f28b82;
+    border-color: #f28b82;
+}
+
+.config-switch .form-check-label {
+    font-size: 0.9rem;
+    cursor: pointer;
+}

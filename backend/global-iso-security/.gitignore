@@ -1,0 +1,20 @@
+# NetBeans / frontend local
+/frontend/nbproject/private/
+/Fronted1/nbproject/private/
+/Fronted1/build/
+
+# Docker / secrets
+.env
+.env.*
+!.env.example
+
+# Java build output
+backend/target/
+target/
+*.class
+*.jar.original
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
